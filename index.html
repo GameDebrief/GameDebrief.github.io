@@ -1,1 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Game Debrief</title>
+    <link rel="icon" type="image/png" href="images/logo_t.png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
 
+    <a href="index.html" class="banner-link">
+        <img src="images/banner_st.png" alt="Game Debrief Banner" class="banner">
+    </a>
+
+    <nav>
+        <a href="#">Home</a>
+        <a href="#">News</a>
+        <a href="#">Reviews</a>
+        <a href="#">Features</a>
+    </nav>
+
+    <div class="content">
+        <div class="main-content" id="latest-articles">
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Game Debrief. All rights reserved.</p>
+    </footer>
+
+    <script>
+        function loadLatestArticles() {
+            const articleContainer = document.getElementById('latest-articles');
+            if (!articleContainer) {
+                console.error("Error: articleContainer element not found.");
+                return;
+            }
+
+            const articleFiles = [
+                "articles/2024-06-17.html",
+                "articles/2024-06-16.html",
+                "articles/2024-06-15.html"
+            ];
+
+            articleFiles.sort((a, b) => {
+                const dateA = new Date(a.split('/')[1].split('.')[0]);
+                const dateB = new Date(b.split('/')[1].split('.')[0]);
+                return dateB - dateA;
+            });
+
+            const latestFour = articleFiles.slice(0, 4);
+
+            latestFour.forEach(filename => {
+                console.log("Fetching article:", filename);
+
+                fetch(filename)
+                    .then(response => {
+                        if (!response.ok) {
+                            console.error("Error fetching", filename, response.status, response.statusText);
+                            throw new Error(`Failed to fetch ${filename}: ${response.status} ${response.statusText}`);
+                        }
+                        return response.text();
+                    })
+                    .then(html => {
+                        const article = document.createElement('article');
+                        article.innerHTML = html;
+                        articleContainer.appendChild(article);
+                        console.log("Article loaded:", filename);
+                    })
+                    .catch(error => console.error('Error loading article:', error));
+            });
+        }
+
+        window.onload = loadLatestArticles;
+    </script>
+</body>
+</html>
